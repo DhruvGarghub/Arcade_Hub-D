@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./Pages/Dashboard";
+import Minesweeper from "./Minesweeper/Minesweeper";
+import Profile from "./Pages/Profile";
+import Pacman from "./pacman/pacman";
+import Login from "./Pages/Login";
+import FlappyBird from "./FlappyBird/FlappyBird";
+import Friends from "./Pages/Friends";
+import Snake from "./Snake/Snake";
+import TicTacToe from "./TicTacToe/tictactoe";
+import Shooter from "./Shooter/Shooter";
+import LoadingScreen from "./Components/LoadingScreen";
+import BrickBreaker from "./BrickBreaker/BrickBreaker";
+import Pong from "./Pong/Pong";
+import Tetris from "./Tetris/Tetris";
+
+import { supabase } from "./lib/supabase";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const test = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      console.log("Supabase Connection: ", { data, error });
+    };
+
+    test();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 1600);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showLoader) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/profile/:username" element={<Profile />} />
+      <Route path="/minesweeper" element={<Minesweeper />} />
+      <Route path="/pacman" element={<Pacman />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/flappybird" element={<FlappyBird />} />
+      <Route path="/snake" element={<Snake />} />
+      <Route path="/friends" element={<Friends />} />
+      <Route path="/brick-breaker" element={<BrickBreaker />} />
+      <Route path="/pong" element={<Pong />} />
+      <Route path="/tetris" element={<Tetris />} />
+      <Route path="/tictactoe" element={<TicTacToe />} />
+      <Route path="/shooter" element={<Shooter />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
